@@ -26,8 +26,7 @@ public class Product {
     public Product() {
     }
 
-    public Product(long id, String name, String description, String unit, String manufacturer, ProductStatus status) {
-        this.id = id;
+    public Product(String name, String description, String unit, String manufacturer, ProductStatus status) {
         this.name = name;
         this.description = description;
         this.unit = unit;
@@ -39,9 +38,6 @@ public class Product {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;

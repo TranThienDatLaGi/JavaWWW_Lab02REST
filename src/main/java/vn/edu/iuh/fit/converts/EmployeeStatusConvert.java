@@ -1,4 +1,4 @@
-package vn.edu.iuh.fit.models;
+package vn.edu.iuh.fit.converts;
 
 import jakarta.persistence.AttributeConverter;
 import vn.edu.iuh.fit.enums.EmployeeStatus;

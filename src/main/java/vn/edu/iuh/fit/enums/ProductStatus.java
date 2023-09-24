@@ -1,7 +1,7 @@
 package vn.edu.iuh.fit.enums;
 
 public enum ProductStatus {
-    TRADING(1), PAUSE(0), RETIRE(-1);
+    ACTIVE(1), DEACTIVE(0), DELETE(-1);
     private final int code;
 
     public int getCode() {
@@ -12,8 +12,8 @@ public enum ProductStatus {
         this.code = code;
     }
 
-    public static EmployeeStatus fromcode(int code) {
-        for (EmployeeStatus status : EmployeeStatus.values()) {
+    public static ProductStatus fromcode(int code) {
+        for (ProductStatus status : ProductStatus.values()) {
             if (status.getCode() == code) {
                 return status;
             }

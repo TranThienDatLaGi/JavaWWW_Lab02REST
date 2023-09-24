@@ -2,6 +2,7 @@ package vn.edu.iuh.fit.models;
 
 import jakarta.json.bind.annotation.JsonbDateFormat;
 import jakarta.persistence.*;
+import vn.edu.iuh.fit.converts.EmployeeStatusConvert;
 import vn.edu.iuh.fit.enums.EmployeeStatus;
 
 import java.time.LocalDateTime;
@@ -11,21 +12,21 @@ import java.time.LocalDateTime;
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(columnDefinition = "BIGINT(20)",name = "emp_id")
+    @Column(columnDefinition = "BIGINT(20)", name = "emp_id")
     private long id;
-    @Column(columnDefinition = "VARCHAR(150)",name = "full_N=name",nullable = false)
+    @Column(columnDefinition = "VARCHAR(150)", name = "full_N=name", nullable = false)
     private String fullName;
-    @Column(name = "dob",nullable = false)
+    @Column(name = "dob", nullable = false)
     @JsonbDateFormat(value = "yyyy-MM-dd")
     private LocalDateTime dob;
-    @Column(name = "email",unique = true,columnDefinition = "VARCHAR(150)")
+    @Column(name = "email", unique = true, columnDefinition = "VARCHAR(150)")
     private String email;
-    @Column(name = "phone",nullable = false,columnDefinition = "VARCHAR(150)")
+    @Column(name = "phone", nullable = false, columnDefinition = "VARCHAR(150)")
     private String phone;
-    @Column(name = "address",nullable = false,columnDefinition = "VARCHAR(250)")
+    @Column(name = "address", nullable = false, columnDefinition = "VARCHAR(250)")
     private String address;
 
-    @Column(name = "status",nullable = false,columnDefinition = "INT(11)")
+    @Column(name = "status", nullable = false, columnDefinition = "INT(11)")
     @Enumerated(EnumType.ORDINAL)
     @Convert(converter = EmployeeStatusConvert.class)
     private EmployeeStatus status;
@@ -33,8 +34,7 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(long id, String fullName, LocalDateTime dob, String email, String phone, String address, EmployeeStatus status) {
-        this.id = id;
+    public Employee(String fullName, LocalDateTime dob, String email, String phone, String address, EmployeeStatus status) {
         this.fullName = fullName;
         this.dob = dob;
         this.email = email;
@@ -45,10 +45,6 @@ public class Employee {
 
     public long getId() {
         return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getFullName() {

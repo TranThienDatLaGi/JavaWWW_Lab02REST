@@ -1,7 +1,7 @@
 package vn.edu.iuh.fit.enums;
 
 public enum EmployeeStatus {
-    WORKING(1), PAUSE(0), QUIT(-1);
+    ACTIVE(1), DEACTIVE(0), DELETE(-1);
     private final int code;
     EmployeeStatus(int code) {
         this.code = code;
