@@ -14,10 +14,12 @@ public class ProductPrice {
     @Column(columnDefinition = "BIGINT(20)")
     private Product product;
     @Id
-    @Column(name = "price_date", nullable = false)
+    @Column(name = "price_date_time", nullable = false)
     @JsonbDateFormat(value = "yyyy-MM-dd")
     private LocalDateTime dateTime;
+    @Column(nullable = false)
     private double price;
+    @Column(columnDefinition = "VARCHAR(255)")
     private String note;
 
     public ProductPrice(Product product, LocalDateTime dateTime, double price, String note) {

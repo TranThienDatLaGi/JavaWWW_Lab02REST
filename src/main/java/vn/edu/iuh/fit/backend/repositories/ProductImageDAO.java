@@ -3,26 +3,26 @@ package vn.edu.iuh.fit.backend.repositories;
 import jakarta.persistence.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vn.edu.iuh.fit.backend.models.ProductPrice;
+import vn.edu.iuh.fit.backend.models.Order;
+import vn.edu.iuh.fit.backend.models.ProductImage;
 
 import java.util.List;
 import java.util.Optional;
 
-public class ProductPriceRepo {
+public class ProductImageDAO {
     private EntityManager em;
     private EntityManagerFactory emf;
     private EntityTransaction trans;
     private Logger logger= LoggerFactory.getLogger(this.getClass().getName());
 
-    public ProductPriceRepo() {
+    public ProductImageDAO() {
         em= Persistence.createEntityManagerFactory("default").createEntityManager();
         trans=em.getTransaction();
     }
-
-    public boolean insertProductPrice(ProductPrice productPrice){
+    public boolean insertProductImage(ProductImage productImage){
         try {
             trans.commit();
-            em.persist(productPrice);
+            em.persist(productImage);
             trans.commit();
             return true;
         }catch (Exception e){
@@ -31,10 +31,10 @@ public class ProductPriceRepo {
         }
         return false;
     }
-    public boolean updateProductPrice(ProductPrice productPrice){
+    public boolean updateProductImage(ProductImage productImage){
         try {
             trans.commit();
-            em.merge(productPrice);
+            em.merge(productImage);
             trans.commit();
             return true;
         }catch (Exception e){
@@ -44,20 +44,20 @@ public class ProductPriceRepo {
         return false;
     }
 
-    public Optional<ProductPrice> findProductPrice(long id) {
-        TypedQuery<ProductPrice> query = em.createQuery("select o from ProductPrice o where o.id=:id", ProductPrice.class);
+    public Optional<ProductImage> findProductImage(long id) {
+        TypedQuery<ProductImage> query = em.createQuery("select o from ProductImage o where o.id=:id", ProductImage.class);
         query.setParameter("id", id);
-        ProductPrice productPrice = query.getSingleResult();
-        return productPrice == null ? Optional.empty() : Optional.of(productPrice);
+        ProductImage productImage = query.getSingleResult();
+        return productImage == null ? Optional.empty() : Optional.of(productImage);
     }
 
-    public boolean deleteProductPrice(long id) {
-        Optional<ProductPrice> op = findProductPrice(id);
-        ProductPrice productPrice = op.isPresent() ? op.get() : null;
-        if (productPrice == null) return false;
+    public boolean deleteProductImage(long id) {
+        Optional<ProductImage> op = findProductImage(id);
+        ProductImage productImage = op.isPresent() ? op.get() : null;
+        if (productImage == null) return false;
         try {
             trans.begin();
-            em.remove(productPrice);
+            em.remove(productImage);
             trans.commit();
             return true;
         } catch (Exception e) {
@@ -67,10 +67,10 @@ public class ProductPriceRepo {
         return false;
     }
 
-    public List<ProductPrice> getAllProductPrice() {
+    public List<ProductImage> getAllProductImages() {
         try {
             trans.begin();
-            List<ProductPrice> list = em.createNativeQuery("SELECT * from product_price ", ProductPrice.class).getResultList();
+            List<ProductImage> list = em.createNativeQuery("SELECT * from product_image ", Order.class).getResultList();
             trans.commit();
             return list;
         } catch (Exception e) {

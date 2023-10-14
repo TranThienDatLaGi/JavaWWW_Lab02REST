@@ -7,7 +7,7 @@
         <class>vn.edu.iuh.fit.backend.models.Customer</class>
         <class>vn.edu.iuh.fit.backend.models.Employee</class>
         <class>vn.edu.iuh.fit.backend.models.OrderDetail</class>
-        <class>vn.edu.iuh.fit.backend.models.Orders</class>
+        <class>vn.edu.iuh.fit.backend.models.Order</class>
         <class>vn.edu.iuh.fit.backend.models.Product</class>
         <class>vn.edu.iuh.fit.backend.models.ProductImage</class>
         <class>vn.edu.iuh.fit.backend.models.ProductPrice</class>
@@ -22,6 +22,9 @@
             <property name="jakarta.persistence.jdbc.user" value="root"/>
             <property name="jakarta.persistence.jdbc.password" value="sapassword"/>
             <property name="jakarta.persistence.schema-generation.database.action" value="create"/>
+            <!--show query-->
+            <property name="eclipselink.logging.level.sql" value="FINE"/>
+            <property name="eclipselink.logging.parameters" value="true"/>
         </properties>
     </persistence-unit>
 </persistence>

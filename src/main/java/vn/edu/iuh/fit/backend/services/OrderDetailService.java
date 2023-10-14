@@ -1,16 +1,16 @@
 package vn.edu.iuh.fit.backend.services;
 
 import vn.edu.iuh.fit.backend.models.OrderDetail;
-import vn.edu.iuh.fit.backend.repositories.OrderDetailRepo;
+import vn.edu.iuh.fit.backend.repositories.OrderDetailDAO;
 
 import java.util.List;
 import java.util.Optional;
 
 public class OrderDetailService {
-    private OrderDetailRepo repo;
+    private final OrderDetailDAO repo=new OrderDetailDAO();
 
-    public OrderDetailService(OrderDetailRepo repo) {
-        this.repo = repo;
+    public OrderDetailService() {
+
     }
 
     public boolean insertOrderDetail(OrderDetail orderDetail) {

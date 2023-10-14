@@ -3,26 +3,26 @@ package vn.edu.iuh.fit.backend.repositories;
 import jakarta.persistence.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vn.edu.iuh.fit.backend.models.Orders;
+import vn.edu.iuh.fit.backend.models.OrderDetail;
 
 import java.util.List;
 import java.util.Optional;
 
-public class OrdersRepo {
+public class OrderDetailDAO {
     private EntityManager em;
     private EntityManagerFactory emf;
     private EntityTransaction trans;
     private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-    public OrdersRepo() {
+    public OrderDetailDAO() {
         em = Persistence.createEntityManagerFactory("default").createEntityManager();
         trans = em.getTransaction();
     }
 
-    public boolean insertOrder(Orders orders) {
+    public boolean insertOrderDetail(OrderDetail orderDetail) {
         try {
             trans.begin();
-            em.persist(orders);
+            em.persist(orderDetail);
             trans.commit();
             return true;
         } catch (Exception e) {
@@ -32,10 +32,10 @@ public class OrdersRepo {
         return false;
     }
 
-    public boolean updateOrder(Orders orders) {
+    public boolean updateOrderDetail(OrderDetail orderDetail) {
         try {
             trans.begin();
-            em.merge(orders);
+            em.merge(orderDetail);
             trans.commit();
             return true;
         } catch (Exception e) {
@@ -45,20 +45,19 @@ public class OrdersRepo {
         return false;
     }
 
-    public Optional<Orders> findOrder(long id) {
-        TypedQuery<Orders> query = em.createQuery("select o from Orders o where o.id=:id", Orders.class);
-        query.setParameter("id", id);
-        Orders orders = query.getSingleResult();
-        return orders == null ? Optional.empty() : Optional.of(orders);
+    public Optional<OrderDetail> findOrderDetail(long OrderID, long ProductID) {
+        OrderDetail orderDetail = (OrderDetail) em.createNativeQuery("Select od from order_detail od where od.order_id = " + OrderID + " and od.product_id = " + ProductID + " ", OrderDetail.class).getSingleResult();
+        return orderDetail == null ? Optional.empty() : Optional.of(orderDetail);
+
     }
 
-    public boolean deleteOrders(long id) {
-        Optional<Orders> op = findOrder(id);
-        Orders orders = op.isPresent() ? op.get() : null;
-        if (orders == null) return false;
+    public boolean deleteOrderDetail(long OrderID, long ProductID) {
+        Optional<OrderDetail> op = findOrderDetail(OrderID, ProductID);
+        OrderDetail orderDetail = op.isPresent() ? op.get() : null;
+        if (orderDetail == null) return false;
         try {
             trans.begin();
-            em.remove(orders);
+            em.remove(orderDetail);
             trans.commit();
             return true;
         } catch (Exception e) {
@@ -67,14 +66,13 @@ public class OrdersRepo {
         }
         return false;
     }
-
-    public List<Orders> getAllOrders() {
+    public List<OrderDetail> getAllOrderDetails(){
         try {
             trans.begin();
-            List<Orders> list = em.createNativeQuery("SELECT * from orders ", Orders.class).getResultList();
+            List<OrderDetail> list= em.createNativeQuery("Select * from order_detail  ", OrderDetail.class).getResultList();
             trans.commit();
             return list;
-        } catch (Exception e) {
+        }catch (Exception e){
             logger.info(e.getMessage());
             trans.rollback();
         }

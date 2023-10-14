@@ -1,16 +1,16 @@
 package vn.edu.iuh.fit.backend.services;
 
 import vn.edu.iuh.fit.backend.models.ProductImage;
-import vn.edu.iuh.fit.backend.repositories.ProductImageRepo;
+import vn.edu.iuh.fit.backend.repositories.ProductImageDAO;
 
 import java.util.List;
 import java.util.Optional;
 
 public class ProductImageService {
-    private ProductImageRepo repo;
+    private final ProductImageDAO repo=new ProductImageDAO();
 
-    public ProductImageService(ProductImageRepo repo) {
-        this.repo = repo;
+    public ProductImageService() {
+
     }
 
     public boolean insertProductImage(ProductImage productImage) {

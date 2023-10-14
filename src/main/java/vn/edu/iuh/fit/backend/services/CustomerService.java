@@ -1,16 +1,16 @@
 package vn.edu.iuh.fit.backend.services;
 
 import vn.edu.iuh.fit.backend.models.Customer;
-import vn.edu.iuh.fit.backend.repositories.CustomerRepo;
+import vn.edu.iuh.fit.backend.repositories.CustomerDAO;
 
 import java.util.List;
 import java.util.Optional;
 
 public class CustomerService {
-    private CustomerRepo repo;
+    private final CustomerDAO repo=new CustomerDAO();
 
-    public CustomerService(CustomerRepo repo) {
-        this.repo = repo;
+    public CustomerService() {
+
     }
 
     public boolean insertCustomer(Customer customer) {

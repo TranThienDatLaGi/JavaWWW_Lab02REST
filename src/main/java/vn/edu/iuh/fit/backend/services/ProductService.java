@@ -1,16 +1,16 @@
 package vn.edu.iuh.fit.backend.services;
 
 import vn.edu.iuh.fit.backend.models.Product;
-import vn.edu.iuh.fit.backend.repositories.ProductRepo;
+import vn.edu.iuh.fit.backend.repositories.ProductDAO;
 
 import java.util.List;
 import java.util.Optional;
 
 public class ProductService {
-    private ProductRepo repo;
+    private final ProductDAO repo=new ProductDAO();
 
-    public ProductService(ProductRepo repo) {
-        this.repo = repo;
+    public ProductService() {
+
     }
 
     public boolean insertProduct(Product product) {
@@ -32,4 +32,5 @@ public class ProductService {
     public List<Product> getAllProducts() {
         return repo.getAllProducts();
     }
+    public List<Product> getActiveProduct(){return repo.getActiveProduct();}
 }

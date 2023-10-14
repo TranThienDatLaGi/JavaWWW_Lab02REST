@@ -4,28 +4,27 @@ import jakarta.persistence.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vn.edu.iuh.fit.backend.enums.EmployeeStatus;
-import vn.edu.iuh.fit.backend.enums.ProductStatus;
 import vn.edu.iuh.fit.backend.models.Employee;
-import vn.edu.iuh.fit.backend.models.Product;
 
 import java.util.List;
 import java.util.Optional;
 
-public class ProductRepo {
+public class EmployeeDAO {
     private EntityManager em;
     private EntityManagerFactory emf;
     private EntityTransaction trans;
     private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-    public ProductRepo() {
+
+    public EmployeeDAO() {
         em = Persistence.createEntityManagerFactory("default").createEntityManager();
         trans = em.getTransaction();
     }
 
-    public boolean insertProduct(Product product) {
+    public boolean insertEmployee(Employee employee) {
         try {
             trans.begin();
-            em.persist(product);
+            em.persist(employee);
             trans.commit();
             return true;
         } catch (Exception e) {
@@ -35,10 +34,10 @@ public class ProductRepo {
         return false;
     }
 
-    public boolean updateProduct(Product product) {
+    public boolean updateEmployee(Employee employee) {
         try {
             trans.begin();
-            em.merge(product);
+            em.merge(employee);
             trans.commit();
             return true;
         } catch (Exception e) {
@@ -48,21 +47,21 @@ public class ProductRepo {
         return false;
     }
 
-    public Optional<Product> findProduct(long id) {
-        TypedQuery<Product> query = em.createQuery("select e from Product e where e.id=:id", Product.class);
+    public Optional<Employee> findEmployee(long id) {
+        TypedQuery<Employee> query = em.createQuery("select e from Employee e where e.id=:id", Employee.class);
         query.setParameter("id", id);
-        Product product = query.getSingleResult();
-        return product == null ? Optional.empty() : Optional.of(product);
+        Employee employee = query.getSingleResult();
+        return employee == null ? Optional.empty() : Optional.of(employee);
     }
 
-    public boolean deleteProduct(long id) {
+    public boolean deleteEmployee(long id) {
         try {
             trans.begin();
-            Optional<Product> op = findProduct(id);
-            Product product = op.isPresent() ? op.get() : null;
-            if (product != null) {
-                product.setStatus(ProductStatus.DELETE);
-                em.merge(product);
+            Optional<Employee> op = findEmployee(id);
+            Employee employee = op.isPresent() ? op.get() : null;
+            if (employee != null) {
+                employee.setStatus(EmployeeStatus.DELETE);
+                em.merge(employee);
             }
             trans.commit();
             return true;
@@ -73,17 +72,30 @@ public class ProductRepo {
         }
         return false;
     }
-
-    public List<Product> getAllProducts() {
+    public List<Employee> getAllEmployee(){
         try {
             trans.begin();
-            List<Product> list = em.createNativeQuery("Select * from product order by name ", Product.class).getResultList();
+            List<Employee> list= em.createNativeQuery("Select * from employee order by full_name ", Employee.class).getResultList();
             trans.commit();
             return list;
-        } catch (Exception e) {
+        }catch (Exception e){
             logger.info(e.getMessage());
             trans.rollback();
         }
         return null;
     }
+    public List<Employee> getActiveEmployee(){
+        try{
+            List<Employee> list=em.createQuery("Select e from Employee e where e.status=:status",Employee.class)
+                    .setParameter("status",EmployeeStatus.ACTIVE)
+                    .getResultList();
+            trans.commit();
+            return list;
+        }catch (Exception e){
+            logger.info(e.getMessage());
+            trans.rollback();
+        }
+        return null;
+    }
+
 }

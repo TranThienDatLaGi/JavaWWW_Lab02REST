@@ -6,6 +6,7 @@ import vn.edu.iuh.fit.backend.converts.EmployeeStatusConvert;
 import vn.edu.iuh.fit.backend.enums.EmployeeStatus;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "employee")
@@ -25,14 +26,10 @@ public class Employee {
     private String phone;
     @Column(name = "address", nullable = false, columnDefinition = "VARCHAR(250)")
     private String address;
-
     @Column(name = "status", nullable = false, columnDefinition = "INT(11)")
     @Enumerated(EnumType.ORDINAL)
     @Convert(converter = EmployeeStatusConvert.class)
     private EmployeeStatus status;
-
-    public Employee() {
-    }
 
     public Employee(String fullName, LocalDateTime dob, String email, String phone, String address, EmployeeStatus status) {
         this.fullName = fullName;
@@ -41,6 +38,9 @@ public class Employee {
         this.phone = phone;
         this.address = address;
         this.status = status;
+    }
+
+    public Employee() {
     }
 
     public long getId() {
