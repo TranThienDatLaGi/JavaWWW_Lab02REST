@@ -7,65 +7,58 @@ import vn.edu.iuh.fit.backend.models.Employee;
 import vn.edu.iuh.fit.backend.services.EmployeeService;
 
 import java.util.List;
+import java.util.Optional;
+
 @Path("/employee")
 public class EmployeeResource {
-    private final EmployeeService employeeService = new EmployeeService();
-
-    public EmployeeResource() {
+    private EmployeeService employeeService;
+    public EmployeeResource(){
+        this.employeeService = new EmployeeService();
     }
 
     @GET
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll() {
-        List<Employee> list = employeeService.getAllEmployee();
-        return Response.ok(list).build();
+    public List<Employee> getAll(){
+        return employeeService.findAll();
     }
-
     @GET
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getActive() {
-        List<Employee> list = employeeService.getActiveEmployee();
-        return Response.ok(list).build();
-    }
-
-    @GET
     @Path("/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response findByID(@PathParam("id") long id) {
-        if(employeeService.findEmployee(id).isEmpty())
-            return Response.status(Response.Status.NOT_FOUND).build();
-        return Response.ok(employeeService.findEmployee(id).get()).build();
+    public Response getOne(@PathParam("id") long id){
+        Optional<Employee> op = employeeService.findOne(id);
+        if (op.isPresent()){
+            return Response.ok(op.get()).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response insert(Employee employee){
-        employeeService.insertEmployee(employee);
-        return Response.ok(employee).build();
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response insertOne(Employee employee){
+        boolean result = employeeService.add(employee);
+        if (result){
+            return Response.ok(employee).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
     @PUT
-    @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("id") long id,Employee employee){
-        if(employeeService.findEmployee(id).isEmpty())
-            return Response.status(Response.Status.NOT_FOUND).build();
-        boolean update= employeeService.updateEmployee(employee);
-        if(!update)
-            return Response.status(Response.Status.NOT_FOUND).build();
-        return Response.ok(employee).build();
+    public Response updateOne(Employee employee){
+        boolean result = employeeService.update(employee);
+        if (result){
+            return Response.ok(employee).build();
+        }
+        return  Response.status(Response.Status.BAD_REQUEST).build();
     }
     @DELETE
-    @Path("/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("id") long id){
-        boolean delete=employeeService.deleteEmployee(id);
-        if(!delete)
-            return Response.status(Response.Status.NOT_FOUND).build();
-        return Response.ok(id).build();
+    @Path("/{id}")
+    public Response deleteOne(@PathParam("id") long id){
+        boolean result = employeeService.delete(id);
+        if (result){
+            return Response.ok(id).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 }

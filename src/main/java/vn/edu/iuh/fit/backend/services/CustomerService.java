@@ -1,35 +1,36 @@
 package vn.edu.iuh.fit.backend.services;
 
 import vn.edu.iuh.fit.backend.models.Customer;
-import vn.edu.iuh.fit.backend.repositories.CustomerDAO;
+import vn.edu.iuh.fit.backend.repositories.CustomerRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 public class CustomerService {
-    private final CustomerDAO repo=new CustomerDAO();
+    private CustomerRepository customerRepository;
 
-    public CustomerService() {
-
+    public CustomerService(){
+        this.customerRepository = new CustomerRepository();
     }
 
-    public boolean insertCustomer(Customer customer) {
-        return repo.insertCustomer(customer);
+    public boolean add(Customer customer){
+        return customerRepository.add(customer);
+    }
+    public boolean update(Customer customer){
+        return customerRepository.update(customer);
+    }
+    public boolean delete(long custId) {
+        return customerRepository.delete(custId);
+    }
+    public Optional<Customer> findOne(long custId){
+        return customerRepository.findOne(custId);
+    }
+    public List<Customer> findAll(){
+        return customerRepository.findAll();
+
+    }
+    public List<Customer> getCustByNumPage(int numPage, int limitNum){
+        return customerRepository.getCustByNumPage(numPage, limitNum);
     }
 
-    public boolean updateCustomer(Customer customer) {
-        return repo.updateCustomer(customer);
-    }
-
-    public Optional<Customer> finCustomer(long id) {
-        return repo.finCustomer(id);
-    }
-
-    public boolean deleteCustomer(long id) {
-        return repo.deleteCustomer(id);
-    }
-
-    public List<Customer> getAllCusTomer() {
-        return repo.getAllCusTomer();
-    }
 }

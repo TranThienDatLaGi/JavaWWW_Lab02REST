@@ -7,57 +7,62 @@ import vn.edu.iuh.fit.backend.models.OrderDetail;
 import vn.edu.iuh.fit.backend.services.OrderDetailService;
 
 import java.util.List;
+import java.util.Optional;
 
-@Path("/orderDetails")
+@Path("order-detail")
 public class OrderDetailResource {
-    private final OrderDetailService service= new OrderDetailService();
+    private OrderDetailService orderDetailService;
 
-    public OrderDetailResource() {
+    public OrderDetailResource(){
+        this.orderDetailService = new OrderDetailService();
     }
+
     @GET
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(){
-       List<OrderDetail> list= service.getAllOrderDetails();
-       return Response.ok(list).build();
+    public List<OrderDetail> getAll(){
+        return orderDetailService.findAll();
     }
+
     @GET
-    @Path("/{order_id}/{product_id}")
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findByID(@PathParam("order_id") long orderID,@PathParam("product_id") long productID){
-        if(service.findOrderDetail(orderID, productID).isEmpty())
-            return Response.status(Response.Status.NOT_FOUND).build();
-        return Response.ok(service.findOrderDetail(orderID, productID).get()).build();
+    @Path("/{product_id}/{order_id}")
+    public Response getOne(@PathParam("product_id") long product_id, @PathParam("order_id") long order_id){
+        Optional<OrderDetail> op = orderDetailService.findOne(order_id, product_id);
+        if (op.isPresent()){
+            return Response.ok(op.get()).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response insert(OrderDetail orderDetail){
-        service.insertOrderDetail(orderDetail);
-        return Response.ok(orderDetail).build();
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response insertOne(OrderDetail orderDetail){
+        boolean result =  orderDetailService.add(orderDetail);
+        if (result){
+            return Response.ok(orderDetail).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
     @PUT
-    @Path("/{order_id}/{product_id}")
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("order_id") long orderID,@PathParam("product_id") long productID,OrderDetail orderDetail){
-        if(service.findOrderDetail(orderID, productID).isEmpty())
-            return Response.status(Response.Status.NOT_FOUND).build();
-        boolean update=service.updateOrderDetail(orderDetail);
-        if(!update)
-            return Response.status(Response.Status.NOT_FOUND).build();
-        return Response.ok(orderDetail).build();
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateOne(OrderDetail orderDetail){
+        boolean result = orderDetailService.update(orderDetail);
+        if (result){
+            return Response.ok(orderDetail).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
+
     @DELETE
-    @Path("/{order_id}/{product_id}")
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("order_id") long orderID,@PathParam("product_id") long productID){
-        boolean update=service.deleteOrderDetail(orderID, productID);
-        if(!update)
-            return Response.status(Response.Status.NOT_FOUND).build();
-        return Response.ok(update).build();
+    @Path("/{product_id}/{order_id}")
+    public Response deleteOne(@PathParam("product_id") long product_id, @PathParam("order_id") long order_id){
+        boolean result = orderDetailService.delete(order_id, product_id);
+        if (result){
+            return Response.ok(product_id + " " + order_id).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
 }

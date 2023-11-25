@@ -7,59 +7,59 @@ import vn.edu.iuh.fit.backend.models.Order;
 import vn.edu.iuh.fit.backend.services.OrderService;
 
 import java.util.List;
-@Path("/orders")
+import java.util.Optional;
+
+@Path("/order")
 public class OrderResource {
-    private final OrderService orderService = new OrderService();
+    private OrderService orderService;
 
-    public OrderResource() {
+    public OrderResource(){
+        this.orderService = new OrderService();
     }
-
     @GET
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll() {
-        List<Order> list = orderService.getAllOrders();
-        return Response.ok(list).build();
+    public List<Order> getAll(){
+        return orderService.findAll();
     }
-
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response findByID(@PathParam("id") long id) {
-        if (orderService.findOrder(id).isEmpty())
-            return Response.status(Response.Status.NOT_FOUND).build();
-        return Response.ok(orderService.findOrder(id).get()).build();
+    public Response getOne(@PathParam("id") long id){
+        Optional<Order> op = orderService.findOne(id);
+        if (op.isPresent()){
+            return Response.ok(op.get()).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
-
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response insert(Order order) {
-        orderService.insertOrder(order);
-        return Response.ok(order).build();
+    public Response insertOne(Order order){
+        boolean result = orderService.add(order);
+        if (result){
+            return Response.ok(order).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
-
     @PUT
-    @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("id") long id, Order order) {
-        if (orderService.findOrder(id).isEmpty())
-            return Response.status(Response.Status.NOT_FOUND).build();
-        boolean update = orderService.updateOrder(order);
-        if (!update)
-            return Response.status(Response.Status.NOT_FOUND).build();
-        return Response.ok(order).build();
+    public Response updateOne(Order order){
+        boolean result = orderService.update(order);
+        if (result){
+            return Response.ok(order).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
     @DELETE
-    @Path("/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("id") long id) {
-        boolean delete = orderService.deleteOrders(id);
-        if (!delete)
-            return Response.status(Response.Status.NOT_FOUND).build();
-        return Response.ok(id).build();
+    @Path("/{id}")
+    public Response deleteOne(@PathParam("id") long id){
+        boolean result = orderService.delete(id);
+        if (result){
+            return Response.ok(id).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
+
 }

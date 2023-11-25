@@ -3,74 +3,68 @@ package vn.edu.iuh.fit.backend.resources;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import vn.edu.iuh.fit.backend.models.ProductImage;
 import vn.edu.iuh.fit.backend.models.ProductPrice;
-import vn.edu.iuh.fit.backend.services.ProductImageService;
 import vn.edu.iuh.fit.backend.services.ProductPriceService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
+import java.util.Optional;
 
-@Path("/productPrices")
+@Path("/product-price")
 public class ProductPriceResource {
-    private final ProductPriceService productPriceService = new ProductPriceService();
+    private ProductPriceService productPriceService;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-
-    public ProductPriceResource() {
+    public ProductPriceResource(){
+        this.productPriceService = new ProductPriceService();
     }
 
     @GET
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll() {
-        List<ProductPrice> list = productPriceService.getAllProductPrice();
-        return Response.ok(list).build();
+    public List<ProductPrice> getAll(){
+        return productPriceService.findAll();
     }
-
     @GET
-    @Path("/{id}/{date}")
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findByID(@PathParam("id") long id, @PathParam("date") String date) {
-        LocalDateTime dateTime = LocalDateTime.parse(date, formatter);
-        if (productPriceService.findProductPrice(id, dateTime).isEmpty())
-            return Response.status(Response.Status.NOT_FOUND).build();
-        return Response.ok(productPriceService.findProductPrice(id, dateTime).get()).build();
+    @Path("/{product_id}/{price_date_time}")
+    public Response getOne(@PathParam("product_id") long product_id, @PathParam("price_date_time") String priceDateTime){
+        LocalDateTime localDateTime = LocalDateTime.parse(priceDateTime, formatter);
+        Optional<ProductPrice> op = productPriceService.findOne(product_id, localDateTime);
+        if (op.isPresent()){
+            return Response.ok(op.get()).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
-
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response insert(ProductPrice productPrice) {
-        productPriceService.insertProductPrice(productPrice);
-        return Response.ok(productPrice).build();
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response insertOne(ProductPrice productPrice){
+        boolean result = productPriceService.add(productPrice);
+        if (result){
+            return Response.ok(productPrice).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
-
     @PUT
-    @Path("/{id}/{date}")
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("id") long id, @PathParam("date") String date, ProductPrice productPrice) {
-        LocalDateTime dateTime = LocalDateTime.parse(date, formatter);
-        if (productPriceService.findProductPrice(id, dateTime).isEmpty())
-            return Response.status(Response.Status.NOT_FOUND).build();
-        boolean update = productPriceService.updateProductPrice(productPrice);
-        if (!update)
-            return Response.status(Response.Status.NOT_FOUND).build();
-        return Response.ok(productPrice).build();
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateOne(ProductPrice productPrice){
+        boolean result = productPriceService.update(productPrice);
+        if (result){
+            return Response.ok(productPrice).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
+    }
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{product_id}/{price_date_time}")
+    public Response deleteOne(@PathParam("product_id") long product_id, @PathParam("price_date_time") String priceDateTime){
+        LocalDateTime localDateTime = LocalDateTime.parse(priceDateTime, formatter);
+        boolean result = productPriceService.delete(product_id, localDateTime);
+        if (result){
+            return Response.ok(product_id + " " + priceDateTime).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
-    @DELETE
-    @Path("/{id}/{date}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("id") long id, @PathParam("date") String date) {
-        LocalDateTime dateTime = LocalDateTime.parse(date, formatter);
-        boolean delete = productPriceService.deleteProductPrice(id, dateTime);
-        if (!delete)
-            return Response.status(Response.Status.NOT_FOUND).build();
-        return Response.ok(id).build();
-    }
 }

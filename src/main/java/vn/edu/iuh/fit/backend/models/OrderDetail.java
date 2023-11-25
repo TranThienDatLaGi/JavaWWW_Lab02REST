@@ -2,43 +2,52 @@ package vn.edu.iuh.fit.backend.models;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "order_detail")
+@NamedQuery(name = "OrderDetail.findOne", query = "SELECT od from OrderDetail od where od.product.id = :product and od.order.id = :order")
+@NamedQuery(name = "OrderDetail.findAll", query = "SELECT od from OrderDetail od")
+@NamedQuery(name = "OrderDetail.findAllByOrderId", query = "SELECT od from OrderDetail od where od.order.id = :orderID")
+@NamedQuery(name = "OrderDetail.getOrderDetailByNumPage", query = "SELECT od from OrderDetail  od where od.order.id = :orderID")
 public class OrderDetail {
-    @Id
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order orders;
     @Id
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
-    @Column(name = "price",columnDefinition = "DOUBLE",nullable = false)
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
+    @Column(columnDefinition = "DOUBLE", nullable = false)
     private double price;
-    @Column(name = "quantity",columnDefinition = "DOUBLE",nullable = false)
+    @Column(columnDefinition = "DOUBLE", nullable = false)
     private double quantity;
-    @Column(name = "note",columnDefinition = "VARCHAR(255)",nullable = true)
+    @Column(columnDefinition = "VARCHAR(255)")
     private String note;
 
-    public OrderDetail(Order orders, Product product, double price, double quantity, String note) {
-        this.orders = orders;
+    public OrderDetail() {
+    }
+
+    public OrderDetail(Product product, Order order, double price, double quantity, String note) {
         this.product = product;
+        this.order = order;
         this.price = price;
         this.quantity = quantity;
         this.note = note;
     }
 
-    public OrderDetail(Order orders, Product product) {
-        this.orders = orders;
-        this.product = product;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OrderDetail that = (OrderDetail) o;
+        return Objects.equals(product, that.product) && Objects.equals(order, that.order);
     }
 
-    public Order getOrders() {
-        return orders;
-    }
-
-    public void setOrders(Order orders) {
-        this.orders = orders;
+    @Override
+    public int hashCode() {
+        return Objects.hash(product, order);
     }
 
     public Product getProduct() {
@@ -47,6 +56,14 @@ public class OrderDetail {
 
     public void setProduct(Product product) {
         this.product = product;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
     public double getPrice() {
@@ -76,8 +93,8 @@ public class OrderDetail {
     @Override
     public String toString() {
         return "OrderDetail{" +
-                "orders=" + orders +
-                ", product=" + product +
+                "product=" + product +
+                ", order=" + order +
                 ", price=" + price +
                 ", quantity=" + quantity +
                 ", note='" + note + '\'' +

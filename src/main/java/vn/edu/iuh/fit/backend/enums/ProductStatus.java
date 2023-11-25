@@ -1,23 +1,28 @@
 package vn.edu.iuh.fit.backend.enums;
 
 public enum ProductStatus {
-    ACTIVE(1), DEACTIVE(0), DELETE(-1);
-    private final int code;
+    DoingBusiness(1),
+    TemporarilyPaused(0),
+    NoLongerInBusiness(-1);
 
-    public int getCode() {
-        return code;
+    private final int status;
+
+    private ProductStatus(int status){
+        this.status = status;
     }
 
-    ProductStatus(int code) {
-        this.code = code;
+
+    public int getStatusNumber(){
+        return this.status;
     }
 
-    public static ProductStatus fromcode(int code) {
-        for (ProductStatus status : ProductStatus.values()) {
-            if (status.getCode() == code) {
-                return status;
-            }
-        }
-        throw new IllegalArgumentException("Invalid EmployeeStatus code: " + code);
+    public static ProductStatus fromStatusNumber(int statusNumber){
+        return switch (statusNumber) {
+            case 1 -> ProductStatus.DoingBusiness;
+            case 0 -> ProductStatus.TemporarilyPaused;
+            case -1 -> ProductStatus.NoLongerInBusiness;
+            default -> ProductStatus.TemporarilyPaused;
+        };
     }
+
 }

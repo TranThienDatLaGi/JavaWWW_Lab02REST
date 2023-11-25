@@ -1,35 +1,33 @@
 package vn.edu.iuh.fit.backend.services;
 
 import vn.edu.iuh.fit.backend.models.ProductImage;
-import vn.edu.iuh.fit.backend.repositories.ProductImageDAO;
+import vn.edu.iuh.fit.backend.repositories.ProductImageRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 public class ProductImageService {
-    private final ProductImageDAO repo=new ProductImageDAO();
+    private ProductImageRepository productImageRepository;
 
-    public ProductImageService() {
-
+    public ProductImageService(){
+        this.productImageRepository = new ProductImageRepository();
     }
-
-    public boolean insertProductImage(ProductImage productImage) {
-        return repo.insertProductImage(productImage);
+    public boolean add(ProductImage productImage){
+        return productImageRepository.add(productImage);
     }
-
-    public boolean updateProductImage(ProductImage productImage) {
-        return repo.updateProductImage(productImage);
+    public boolean update(ProductImage productImage){
+        return productImageRepository.update(productImage);
     }
-
-    public Optional<ProductImage> findProductImage(long id) {
-        return repo.findProductImage(id);
+    public Optional<ProductImage> findOne(long id){
+        return productImageRepository.findOne(id);
     }
-
-    public boolean deleteProductImage(long id) {
-        return repo.deleteProductImage(id);
+    public boolean delete (long id){
+        return productImageRepository.delete(id);
     }
-
-    public List<ProductImage> getAllProductImages() {
-        return repo.getAllProductImages();
+    public List<ProductImage> findAll(){
+        return productImageRepository.findAll();
+    }
+    public List<ProductImage> getImageByProductIdWithPagination(long productID, int numPage, int limitNum){
+        return productImageRepository.getImageByProductIdWithPagination(productID, numPage, limitNum);
     }
 }

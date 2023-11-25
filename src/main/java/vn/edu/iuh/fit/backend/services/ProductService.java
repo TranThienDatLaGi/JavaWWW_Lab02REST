@@ -1,36 +1,36 @@
 package vn.edu.iuh.fit.backend.services;
 
 import vn.edu.iuh.fit.backend.models.Product;
-import vn.edu.iuh.fit.backend.repositories.ProductDAO;
+import vn.edu.iuh.fit.backend.repositories.ProductRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 public class ProductService {
-    private final ProductDAO repo=new ProductDAO();
+    private ProductRepository productRepository;
 
-    public ProductService() {
-
+    public ProductService(){
+        this.productRepository = new ProductRepository();
     }
-
-    public boolean insertProduct(Product product) {
-        return repo.insertProduct(product);
+    public boolean add(Product product){
+        return productRepository.add(product);
     }
-
-    public boolean updateProduct(Product product) {
-        return repo.updateProduct(product);
+    public boolean update(Product product){
+        return productRepository.update(product);
     }
-
-    public Optional<Product> findProduct(long id) {
-        return repo.findProduct(id);
+    public Optional<Product> findOne(long id){
+        return productRepository.findOne(id);
     }
-
-    public boolean deleteProduct(long id) {
-        return repo.deleteProduct(id);
+    public boolean delete (long id){
+        return productRepository.delete(id);
     }
-
-    public List<Product> getAllProducts() {
-        return repo.getAllProducts();
+    public List<Product> findAll(){
+        return productRepository.findAll();
     }
-    public List<Product> getActiveProduct(){return repo.getActiveProduct();}
+    public List<Product> getProductByPageNum(int pageNum, int limitNum){
+        return productRepository.getProductByPageNum(pageNum, limitNum);
+    }
+    public List<Product> getProductAvailableByPageNum(int pageNum, int limitNum){
+        return productRepository.getProductAvailableByPageNum(pageNum, limitNum);
+    }
 }

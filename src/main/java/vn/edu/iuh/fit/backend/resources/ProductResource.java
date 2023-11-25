@@ -3,71 +3,67 @@ package vn.edu.iuh.fit.backend.resources;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import vn.edu.iuh.fit.backend.models.Employee;
 import vn.edu.iuh.fit.backend.models.Product;
-import vn.edu.iuh.fit.backend.services.EmployeeService;
 import vn.edu.iuh.fit.backend.services.ProductService;
 
 import java.util.List;
-@Path("/products")
+import java.util.Optional;
+
+@Path("/product")
 public class ProductResource {
-    private final ProductService productService= new ProductService();
+    private final ProductService productService;
 
-    public ProductResource() {
+    public ProductResource(){
+        this.productService = new ProductService();
     }
 
     @GET
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll() {
-        List<Product> list = productService.getAllProducts();
-        return Response.ok(list).build();
+    public List<Product> getAll(){
+        return productService.findAll();
     }
 
     @GET
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getActive() {
-        List<Product> list = productService.getActiveProduct();
-        return Response.ok(list).build();
-    }
-
-    @GET
     @Path("/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response findByID(@PathParam("id") long id) {
-        if(productService.findProduct(id).isEmpty())
-            return Response.status(Response.Status.NOT_FOUND).build();
-        return Response.ok(productService.findProduct(id).get()).build();
+    public Response getOne(@PathParam("id") long id){
+        Optional<Product> op = productService.findOne(id);
+        if (op.isPresent()){
+            return Response.ok(op.get()).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response insert(Product product){
-        productService.insertProduct(product);
-        return Response.ok(product).build();
+    public Response insertOne(Product product){
+        boolean result = productService.add(product);
+        if (result){
+            return Response.ok(product).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
     @PUT
-    @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("id") long id,Product product){
-        if(productService.findProduct(id).isEmpty())
-            return Response.status(Response.Status.NOT_FOUND).build();
-        boolean update= productService.updateProduct(product);
-        if(!update)
-            return Response.status(Response.Status.NOT_FOUND).build();
-        return Response.ok(product).build();
+    public Response updateOne(Product product){
+        boolean result = productService.update(product);
+        if (result){
+            return Response.ok(product).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
     @DELETE
-    @Path("/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("id") long id){
-        boolean delete=productService.deleteProduct(id);
-        if(!delete)
-            return Response.status(Response.Status.NOT_FOUND).build();
-        return Response.ok(id).build();
+    @Path("/{id}")
+    public Response deleteOne(@PathParam("id") long id){
+        boolean result = productService.delete(id);
+
+        if (result){
+            return Response.ok(id).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
+
 }
